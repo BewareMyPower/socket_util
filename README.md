@@ -1,7 +1,7 @@
 # socket_util
 对linux的socket库函数的C++封装
 
-# [include](include)目录为所需头文件，目前类的成员函数均为inline函数，因此仅需包含头文件即可使用，需要用-std=c++11选项进行编译。
+[include](include)目录为所需头文件，目前类的成员函数均为inline函数，因此仅需包含头文件即可使用，需要用-std=c++11选项进行编译。
 ## [error_functions.h](include/error_functions.h)
 和APUE/UNP系列相同的错误处理函数，内部不使用静态字符数组，而是用std::string保存错误信息
 ## [socket.hpp](include/socket.hpp)

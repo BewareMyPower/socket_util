@@ -1,10 +1,7 @@
 #include "../include/ipv4_socket.h"
 #include <time.h>
 
-int main(int argc, char* argv[]) {
-    if (argc != 2)
-        err_quit("usage: %s [IPv4 address]", argv[0]);
-
+int main() {
     auto listener = CreateIpv4Socket();
     listener.Bind("0.0.0.0", 8888);
     listener.Listen();
@@ -17,6 +14,4 @@ int main(int argc, char* argv[]) {
         
         conn.Send(buf, strlen(buf));
     }
-
-    return 0;
 }

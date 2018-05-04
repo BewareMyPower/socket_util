@@ -45,7 +45,7 @@ public:
 };
 
 // 工厂方法: 支持仅含1个参数的初始化
-inline Ipv4Socket CreateIpv4Socket(int type, int protocol = 0) {
+inline Ipv4Socket CreateIpv4Socket(int type = SOCK_STREAM, int protocol = 0) {
     return Ipv4Socket(type, protocol);
 }
 

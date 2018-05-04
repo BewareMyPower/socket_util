@@ -24,6 +24,7 @@ public:
 
     int GetFd() const { return fd_; }
 
+    static constexpr size_t BUFSIZE = 1024;  // 默认recv/send缓冲区大小
 protected:
     explicit Socket(int domain, int type, int protocol = 0);
     explicit Socket(int fd) : fd_(fd) {}

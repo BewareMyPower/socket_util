@@ -66,7 +66,7 @@ inline Ipv4Addr Ipv4Socket::GetSockName() const {
     Ipv4Addr::SA_IN addr;
     socklen_t len = sizeof(addr);
     if (::getsockname(fd_, reinterpret_cast<Ipv4Addr::SA*>(&addr), &len) == -1)
-        err_sys("[fd: %d] getperrname failed", fd_);
+        err_sys("[fd: %d] getsockname() failed", fd_);
     return Ipv4Addr(addr);
 }
 
@@ -74,6 +74,6 @@ inline Ipv4Addr Ipv4Socket::GetPeerName() const {
     Ipv4Addr::SA_IN addr;
     socklen_t len = sizeof(addr);
     if (::getpeername(fd_, reinterpret_cast<Ipv4Addr::SA*>(&addr), &len) == -1)
-        err_sys("[fd: %d] getperrname failed", fd_);
+        err_sys("[fd: %d] getpeername() failed", fd_);
     return Ipv4Addr(addr);
 }

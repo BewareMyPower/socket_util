@@ -1,5 +1,6 @@
 // daytimecli.cc: 时间获取客户程序
-#include "../include/ipv4_socket.h"
+#include "../include/ipv4_socket.hpp"
+#include <unistd.h>
 
 int main(int argc, char* argv[]) {
     if (argc != 2)
@@ -8,10 +9,10 @@ int main(int argc, char* argv[]) {
     auto cli = CreateIpv4Socket();
     cli.Connect(argv[1], 8888);
 
-    char buf[Socket::BUFSIZE + 1];
+    char buf[1024];
     ssize_t n;
 
-    while ((n = cli.Recv(buf, Socket::BUFSIZE)) > 0) {
+    while ((n = cli.Recv(buf, sizeof(buf) - 1)) > 0) {
         buf[n] = '\0';
         if (fputs(buf, stdout) == EOF)
             err_sys("fputs");

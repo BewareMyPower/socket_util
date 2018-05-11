@@ -1,4 +1,5 @@
-#include "../include/ipv4_socket.h"
+// daytimesrv.cc: 时间获取服务端程序
+#include "../include/ipv4_socket.hpp"
 #include <time.h>
 
 int main() {

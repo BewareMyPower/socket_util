@@ -5,7 +5,7 @@ OBJECTS = daytimecli daytimesrv
 
 all: $(OBJECTS)
 
-%: %.cc $(INC)/ipv4_socket.h
+%: %.cc $(INC)/ipv4_socket.hpp
 	$(CC) $(FLAGS) $< -o $@
 
 clean:

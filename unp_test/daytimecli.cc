@@ -1,6 +1,7 @@
 // daytimecli.cc: 时间获取客户程序
+#include <stdio.h>
 #include "../include/ipv4_socket.hpp"
-#include <unistd.h>
+#include "../include/error_functions.hpp"
 
 int main(int argc, char* argv[]) {
     if (argc != 2)

@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "socket.hpp"
-#include "ipv4_addr.h"
+#include "ipv4_addr.hpp"
 
 class Ipv4Socket : public Socket {
 public:
@@ -19,7 +19,6 @@ public:
 
     Ipv4Addr GetSockName() const;
     Ipv4Addr GetPeerName() const;
-
 };
 
 // 工厂方法: 支持仅含1个参数的初始化

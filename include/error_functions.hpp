@@ -1,7 +1,7 @@
-#ifndef _ERROR_FUNCTIONS_H_
-#define _ERROR_FUNCTIONS_H_
+#pragma once
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
@@ -117,5 +117,3 @@ inline void err_dump(const char* fmt, Args... args) {
     err_ret(fmt, std::forward<Args>(args)...);
     abort();
 }
-
-#endif

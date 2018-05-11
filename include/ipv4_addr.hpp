@@ -2,7 +2,7 @@
 
 #include <arpa/inet.h>
 #include <string>
-#include "error_functions.h"
+#include "error_functions.hpp"
 
 class Ipv4Addr {
 public:

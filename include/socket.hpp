@@ -4,12 +4,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-#include "error_functions.h"
+#include "error_functions.hpp"
 
 class Socket {
 public:
-    static constexpr size_t BUFSIZE = 1024;  // 默认recv/send缓冲区大小
-
     void Listen(int backlog = SOMAXCONN) const;
 
     ssize_t Send(const char* buf, size_t len, int flags = 0) const;

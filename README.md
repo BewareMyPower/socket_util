@@ -6,7 +6,8 @@
 和APUE/UNP系列相同的错误处理函数，内部不使用静态字符数组，而是用std::string保存错误信息
 ## [socket.hpp](include/socket.hpp)
 - Socket类的实现
-- 该类无法直接构造，必须public继承后并将构造函数设为public权限
+- Socket类无法直接构造，必须public继承后并将构造函数设为public权限
+- Socket类的析构函数自动调用`close`方法，因此支持手动和自动关闭套接字
 - Socket类维护了一个套接字，封装了listen/send/recv/close/等仅和套接字相关的函数，而像bind/accept等和套接字地址相关的函数则由派生类定义
 - 为了与<sys/socket.h>区分开因此使用hpp作为后缀
 - 不使用虚基类原因在于，派生类无需重写仅和套接字相关的函数

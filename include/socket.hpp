@@ -4,9 +4,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include "non_copyable.hpp"
 #include "error_functions.hpp"
 
-class Socket {
+class Socket : public NonCopyable {
 public:
     void Listen(int backlog = SOMAXCONN) const;
 
@@ -48,13 +49,12 @@ public:
      *   当内部调用的send(3)被信号中断时会重新调用send(3)
      */
     ssize_t SendNBytes(const char* buf, size_t n, int flags = 0);
+
 protected:
     explicit Socket(int domain, int type, int protocol = 0);
     explicit Socket(int fd) : fd_(fd) {}
-
     virtual ~Socket();
-    Socket(const Socket&) = delete;
-    Socket& operator=(const Socket&) = delete;
+
     Socket(Socket&&) noexcept;
     Socket& operator=(Socket&&) noexcept;
 

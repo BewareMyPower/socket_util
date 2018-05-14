@@ -1,0 +1,3 @@
+CC = g++
+INC = ../include
+FLAGS = -std=c++11

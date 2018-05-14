@@ -1,7 +1,7 @@
 CC = g++
 INC = ../include
 FLAGS = -std=c++11
-OBJECTS = daytimecli daytimesrv
+OBJECTS = daytimecli daytimesrv tcpechosrv tcpechocli
 
 all: $(OBJECTS)
 

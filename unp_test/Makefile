@@ -1,6 +1,5 @@
-CC = g++
-INC = ../include
-FLAGS = -std=c++11
+include ../Make.defines
+
 OBJECTS = daytimecli daytimesrv tcpechosrv tcpechocli
 
 all: $(OBJECTS)

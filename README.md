@@ -14,6 +14,15 @@
 ## [ipv4_socket.h](include/ipv4_socket.h)
 - 继承自Socket类的Ipv4Socket类的实现，包含了[ipv4_addr.h](include/ipv4_addr.h)（IPv4地址的包装）
 - 使用工厂方法`CreateIpv4Socket`来实现默认类型(流式)套接字的创建
+## [buffered_reader.cpp](include/buffered_reader.cpp)
+- 带缓冲区的读取函数的实现，便于读取一行字节或者n个字节，并且暴露缓冲区给用户
+- 是Socket类自带I/O方法(不带缓冲区读取/写入n个字节)的补充
+
+[lib](lib)目录为所需库文件，目前仅有libsig.a静态库，包含对C库函数signal的POSIX风格实现
+```
+$ cd lib
+$ make
+```
 
 # 编码风格
 - 类和函数的命名均为大小写混合，对应文件的命名均为下划线+小写，参考谷歌C++命名约定。

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "../include/ipv4_socket.hpp"
+#include "../include/sig_util.h"
 
 static void str_echo(Ipv4Socket& conn);  // 服务端建立连接后的处理
 
@@ -9,6 +10,7 @@ int main() {
     auto listener = CreateIpv4Socket();
     listener.Bind("0.0.0.0", 8888);
     listener.Listen();
+    Signal(SIGCHLD, sig_child);
 
     while (true) {
         auto res = listener.AcceptWithAddr();

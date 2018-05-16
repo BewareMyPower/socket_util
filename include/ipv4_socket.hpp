@@ -47,18 +47,28 @@ inline void Ipv4Socket::Connect(const std::string& ip, uint16_t port) const {
 }
 
 inline Ipv4Socket Ipv4Socket::Accept() const {
-    int connfd = ::accept(fd_, nullptr, nullptr);
-    if (connfd == -1)
-        err_sys("accept() failed");
+    int connfd;
+    while ((connfd = ::accept(fd_, nullptr, nullptr)) == -1) {
+        if (errno == EINTR)  // accept被信号中断时自动重启
+            continue;
+        else
+            err_sys("accept() failed");
+    }
     return Ipv4Socket(connfd);
 }
 
 inline std::pair<Ipv4Socket, Ipv4Addr> Ipv4Socket::AcceptWithAddr() const {
     Ipv4Addr::SA_IN addr;
+    auto pAddr = reinterpret_cast<Ipv4Addr::SA*>(&addr);
     socklen_t len = sizeof(addr);
-    int connfd = ::accept(fd_, reinterpret_cast<Ipv4Addr::SA*>(&addr), &len);
-    if (connfd == -1)
-        err_sys("accept() failed");
+    int connfd;
+
+    while ((connfd = ::accept(fd_, pAddr, &len)) == -1) {
+        if (errno == EINTR)  // accept被信号中断时自动重启
+            continue;
+        else
+            err_sys("accept() failed");
+    }
     return std::make_pair(Ipv4Socket(connfd), Ipv4Addr(addr));
 }
 

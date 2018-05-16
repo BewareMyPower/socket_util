@@ -1,15 +1,15 @@
-include ../Make.defines
+ROOT = ..
+include ${ROOT}/Make.defines
 
-LIB_SIG = libsig.a
-OBJECTS = signal.o
+OBJECTS = signal.o sig_chld.o
 
 all: $(LIB_SIG) $(OBJECTS)
 
-$(LIB_SIG): signal.o
-	ar rcs $(LIB_SIG) $?
+$(LIB_SIG): $(OBJECTS)
+	ar rcs $(LIB_SIG) $^
 
-signal.o: signal.cc
+%.o: %.cc
 	$(CC) $(FLAGS) -c $<
 
 clean:
-	rm -f *.o *.out
+	rm -f *.o *.out $(LIB_SIG)

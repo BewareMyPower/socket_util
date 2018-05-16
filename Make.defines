@@ -1,3 +1,7 @@
+# 编译器相关的通用参数
 CC = g++
-INC = ../include
-FLAGS = -std=c++11
+INC = $(ROOT)/include
+FLAGS = -std=c++11 -Wall
+
+# 公用静态库
+LIB_SIG = $(ROOT)/lib/libsig.a

@@ -1,6 +1,7 @@
 // tcpechocli.cc: TCP回射客户程序
 #include <stdio.h>
 #include <string.h>
+#include <vector>
 #include "../include/ipv4_socket.hpp"
 #include "../include/buffered_reader.hpp"
 #include "../include/error_functions.hpp"
@@ -11,9 +12,11 @@ int main(int argc, char* argv[]) {
     if (argc != 2)
         err_quit("usage: %s [IPv4 address]", argv[0]);
 
-    auto cli = CreateIpv4Socket();
-    cli.Connect(argv[1], 8888);
-    str_cli(stdin, cli);
+    // 与并发服务器建立5个连接
+    Ipv4Socket clients[5];
+    for (auto& cli : clients)
+        cli.Connect(argv[1], 8888);
+    str_cli(stdin, clients[0]);
     return 0;
 }
 

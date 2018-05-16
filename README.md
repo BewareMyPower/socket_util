@@ -18,7 +18,7 @@ include $(ROOT)/Make.inc  # 库文件的依赖
 # 重要目录说明
 ## [include](include)
 头文件目录，.hpp后缀的文件，无需和静态库文件一起编译
-### [error_functions.h](include/error_functions.h)
+### [error_functions.hpp](include/error_functions.hpp)
 和APUE/UNP系列相同的错误处理函数，内部不使用静态字符数组，而是用std::string保存临时错误信息
 ### [socket.hpp](include/socket.hpp)
 - Socket类的实现
@@ -27,10 +27,10 @@ include $(ROOT)/Make.inc  # 库文件的依赖
 - Socket类维护了一个套接字，封装了listen/send/recv/close/等仅和套接字相关的函数，而像bind/accept等和套接字地址相关的函数则由派生类定义
 - 为了与<sys/socket.h>区分开因此使用hpp作为后缀
 - 不使用虚基类原因在于，派生类无需重写仅和套接字相关的函数
-### [ipv4_socket.h](include/ipv4_socket.h)
-- 继承自Socket类的Ipv4Socket类的实现，包含了[ipv4_addr.h](include/ipv4_addr.h)（IPv4地址的包装）
+### [ipv4_socket.hpp](include/ipv4_socket.hpp)
+- 继承自Socket类的Ipv4Socket类的实现，包含了[ipv4_addr.hpp](include/ipv4_addr.hpp)（IPv4地址的包装）
 - 使用工厂方法`CreateIpv4Socket`来实现默认类型(流式)套接字的创建
-### [buffered_reader.cpp](include/buffered_reader.cpp)
+### [buffered_reader.hpp](include/buffered_reader.hpp)
 - 带缓冲区的读取函数的实现，便于读取一行字节或者n个字节，并且暴露缓冲区给用户
 - 是Socket类自带I/O方法(不带缓冲区读取/写入n个字节)的补充
 ## [lib](lib)

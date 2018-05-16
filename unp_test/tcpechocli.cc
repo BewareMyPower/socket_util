@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <vector>
+#include <string>
 #include "../include/ipv4_socket.hpp"
 #include "../include/buffered_reader.hpp"
 #include "../include/error_functions.hpp"
@@ -9,11 +10,12 @@
 static void str_cli(FILE* fp, Ipv4Socket& conn);  // 客户建立连接后的处理
 
 int main(int argc, char* argv[]) {
-    if (argc != 2)
-        err_quit("usage: %s [IPv4 address]", argv[0]);
+    if (argc < 2)
+        err_quit("usage: %s [IPv4 address] [num_client](default: 5)", argv[0]);
 
-    // 与并发服务器建立5个连接
-    Ipv4Socket clients[5];
+    // 与并发服务器建立多个连接(默认5个连接)
+    int num_client = (argc < 3) ? 5 : std::stoi(argv[2]);
+    std::vector<Ipv4Socket> clients(num_client);
     for (auto& cli : clients)
         cli.Connect(argv[1], 8888);
     str_cli(stdin, clients[0]);

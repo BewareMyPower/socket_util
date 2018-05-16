@@ -7,6 +7,7 @@
 
 class Ipv4Socket : public Socket {
 public:
+    explicit Ipv4Socket() : Socket(AF_INET, SOCK_STREAM, 0) {}
     explicit Ipv4Socket(int type, int protocol) : Socket(AF_INET, type, protocol) {}
     explicit Ipv4Socket(int fd) : Socket(fd) {}
 

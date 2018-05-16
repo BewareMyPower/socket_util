@@ -15,7 +15,7 @@ public:
 
     ssize_t Recv(char* buf, size_t len, int flags = 0) const;
 
-    void Close();
+    void Close() noexcept;
 
     template <typename OptType>
     void SetSockOpt(int level, int optname, const OptType& optval) const;
@@ -78,6 +78,7 @@ Socket::Socket(Socket&& rhs) noexcept : fd_(rhs.fd_) {
 
 Socket& Socket::operator=(Socket&& rhs) noexcept {
     assert(this != &rhs);
+    Close();
     fd_ = rhs.fd_;
     rhs.fd_ = -1;
     return *this;
@@ -111,7 +112,7 @@ OptType Socket::GetSockOpt(int level, int optname) const {
     return optval;
 }
 
-inline void Socket::Close() {
+inline void Socket::Close() noexcept {
     if (fd_ >= 0) {
         close(fd_);
         fd_ = -1;

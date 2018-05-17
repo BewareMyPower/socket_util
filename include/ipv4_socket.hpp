@@ -16,18 +16,22 @@ public:
      * AttachFd  从现有的文件描述符作为当前套接字
      * Listener  创建一个绑定本地地址并进行监听的套接字
      */
-    static Ipv4Socket Create(int type = SOCK_STREAM) { return Ipv4Socket(type, 0); }
+    static Ipv4Socket Create(int type = SOCK_STREAM, int protocol = 0)
+        { return Ipv4Socket(type, protocol); }
     static Ipv4Socket AttachFd(int fd) { return Ipv4Socket(fd); }
-    static Ipv4Socket Listener(int type, int protocol, const char* ip, uint16_t port,
-            int backlog = SOMAXCONN);
+    static Ipv4Socket Listener(int type, int protocol,
+                               const char* ip, uint16_t port,
+                               int backlog = SOMAXCONN);
 
     static Ipv4Socket Listener(uint16_t port, int backlog = SOMAXCONN)
         { return Listener(SOCK_STREAM, 0, "0.0.0.0", port, backlog); }
 
-    static Ipv4Socket Listener(const char* ip, uint16_t port, int backlog = SOMAXCONN)
+    static Ipv4Socket Listener(const char* ip, uint16_t port,
+                               int backlog = SOMAXCONN)
         { return Listener(SOCK_STREAM, 0, ip, port, backlog); }
 
-    static Ipv4Socket Listener(int type, int protocol, uint16_t port, int backlog = SOMAXCONN)
+    static Ipv4Socket Listener(int type, int protocol, uint16_t port,
+                               int backlog = SOMAXCONN)
         { return Listener(type, protocol, "0.0.0.0", port, backlog); }
 
     void Bind(const char* ip, uint16_t) const;
@@ -49,11 +53,6 @@ inline Ipv4Socket Ipv4Socket::Listener(int type, int protocol,
     listener.Bind(ip, port);
     listener.Listen(backlog);
     return listener;
-}
-
-// 工厂方法: 支持仅含1个参数的初始化
-inline Ipv4Socket CreateIpv4Socket(int type = SOCK_STREAM, int protocol = 0) {
-    return Ipv4Socket(type, protocol);
 }
 
 inline void Ipv4Socket::Bind(const char* ip, uint16_t port) const {

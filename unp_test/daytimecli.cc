@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
     if (argc != 2)
         err_quit("usage: %s [IPv4 address]", argv[0]);
 
-    auto cli = CreateIpv4Socket();
+    auto cli = Ipv4Socket::Create();
     cli.Connect(argv[1], 8888);
 
     char buf[1024];

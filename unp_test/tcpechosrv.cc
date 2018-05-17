@@ -7,10 +7,7 @@
 static void str_echo(Ipv4Socket& conn);  // 服务端建立连接后的处理
 
 int main() {
-    auto listener = CreateIpv4Socket();
-    listener.SetSockOpt(SOL_SOCKET, SO_REUSEADDR, 1);
-    listener.Bind("0.0.0.0", 8888);
-    listener.Listen();
+    auto listener = Ipv4Socket::Listener(8888);
     Signal(SIGCHLD, sig_child);
 
     while (true) {

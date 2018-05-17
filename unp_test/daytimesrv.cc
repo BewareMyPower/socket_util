@@ -4,9 +4,7 @@
 #include "../include/ipv4_socket.hpp"
 
 int main() {
-    auto listener = CreateIpv4Socket();
-    listener.Bind("0.0.0.0", 8888);
-    listener.Listen();
+    auto listener = Ipv4Socket::Listener(8888);
 
     char buf[1024];
     while (true) {

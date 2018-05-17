@@ -11,6 +11,25 @@ public:
     explicit Ipv4Socket(int type, int protocol) : Socket(AF_INET, type, protocol) {}
     explicit Ipv4Socket(int fd) : Socket(fd) {}
 
+    /** 工厂方法，来避免构造函数的重载造成的歧义
+     * Create    调用socket创建相应套接字
+     * AttachFd  从现有的文件描述符作为当前套接字
+     * Listener  创建一个绑定本地地址并进行监听的套接字
+     */
+    static Ipv4Socket Create(int type = SOCK_STREAM) { return Ipv4Socket(type, 0); }
+    static Ipv4Socket AttachFd(int fd) { return Ipv4Socket(fd); }
+    static Ipv4Socket Listener(int type, int protocol, const char* ip, uint16_t port,
+            int backlog = SOMAXCONN);
+
+    static Ipv4Socket Listener(uint16_t port, int backlog = SOMAXCONN)
+        { return Listener(SOCK_STREAM, 0, "0.0.0.0", port, backlog); }
+
+    static Ipv4Socket Listener(const char* ip, uint16_t port, int backlog = SOMAXCONN)
+        { return Listener(SOCK_STREAM, 0, ip, port, backlog); }
+
+    static Ipv4Socket Listener(int type, int protocol, uint16_t port, int backlog = SOMAXCONN)
+        { return Listener(type, protocol, "0.0.0.0", port, backlog); }
+
     void Bind(const char* ip, uint16_t) const;
     void Bind(const std::string& ip, uint16_t port) const;
     void Connect(const char* ip, uint16_t port) const;
@@ -21,6 +40,16 @@ public:
     Ipv4Addr GetSockName() const;
     Ipv4Addr GetPeerName() const;
 };
+
+inline Ipv4Socket Ipv4Socket::Listener(int type, int protocol,
+                                       const char* ip, uint16_t port,
+                                       int backlog/* = SOMAXCONN*/) {
+    Ipv4Socket listener(type, protocol);
+    listener.SetSockOpt(SOL_SOCKET, SO_REUSEADDR, 1);
+    listener.Bind(ip, port);
+    listener.Listen(backlog);
+    return listener;
+}
 
 // 工厂方法: 支持仅含1个参数的初始化
 inline Ipv4Socket CreateIpv4Socket(int type = SOCK_STREAM, int protocol = 0) {

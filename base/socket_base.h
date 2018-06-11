@@ -1,0 +1,80 @@
+// socket_base.hpp
+#pragma once
+
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <string>
+#include <utility>  // std::pair
+
+#include "noncopyable.hpp"
+
+namespace socket_util {
+
+class SocketBase : noncopyable {
+public:
+    /* socket API的简单包装，返回false即调用错误，等同于原API返回-1 */
+
+    bool Listen(int backlog = 128) const noexcept {
+        return ::listen(fd_, backlog) != -1;
+    }
+
+    bool Close() noexcept {
+        if (fd_ < 0) return false;
+        int ret = ::close(fd_);
+        fd_ = -1;
+        return ret != -1;
+    } 
+    
+    ssize_t Send(const char* buf, size_t len, int flags = 0) const noexcept {
+        return ::send(fd_, buf, len, flags);
+    }
+
+    ssize_t Recv(char* buf, size_t len, int flags = 0) const noexcept {
+        return ::recv(fd_, buf, len, flags);
+    }
+
+    template <typename OptType>
+    bool SetSockOpt(int level, int optname, const OptType& optval) const noexcept {
+        return ::setsockopt(fd_, level, optname, &optval, sizeof(optval)) != -1;
+    }
+
+    template <typename OptType>
+    std::pair<bool, OptType> GetSockOpt(int level, int optname) const noexcept {
+        OptType optval;
+        socklen_t optlen = sizeof(optval);
+        int ret = ::getsockopt(fd_, level, optname, &optval, &optlen);
+        return std::make_pair(ret, optval);
+    }
+
+    /** 针对socket的实用函数 */
+
+    // 取得内部文件描述符
+    int GetFd() const noexcept { return fd_; }
+
+    // 更换绑定的文件描述符
+    void SetFd(int newfd) noexcept { fd_ = newfd; }
+
+    // 若一次send不够或者被信号中断则重新send直到发送完n个字节为止
+    // 若发送失败，返回false，errno被设置
+    bool SendNBytes(const char* buf, size_t n, int flags = 0) const noexcept;
+
+    bool SendString(const char* buf, int flags = 0) const noexcept {
+        return SendNBytes(buf, strlen(buf), flags);
+    }
+
+    bool SendString(const std::string& str) const noexcept {
+        return SendString(str.data(), str.size());
+    }
+
+protected:
+    // 禁止直接构造该基类，而是在派生类的构造函数中调用该类的构造函数
+    explicit SocketBase(int fd) noexcept : fd_(fd) {}
+    virtual ~SocketBase() { Close(); }
+
+private:
+    int fd_;
+};
+
+}

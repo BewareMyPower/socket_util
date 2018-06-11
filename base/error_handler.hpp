@@ -1,4 +1,4 @@
-// error_handler.h
+// error_handler.hpp
 #pragma once
 
 #include <stdio.h>

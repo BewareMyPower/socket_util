@@ -1,6 +1,7 @@
 // socket_base.cc
 #include "socket_base.h"
 #include <errno.h>
+#include <fcntl.h>
 
 namespace socket_util {
 
@@ -22,6 +23,19 @@ bool SocketBase::SendNBytes(
     }
 
     return n;
+}
+
+bool SocketBase::SetNonblocking(bool doit) const noexcept{
+    int flags = ::fcntl(fd_, F_GETFL, 0);
+    if (-1 == flags)
+        return false;
+
+    if (doit)
+        flags |= O_NONBLOCK;
+    else
+        flags &= ~O_NONBLOCK;
+
+    return ::fcntl(fd_, F_SETFL, flags);
 }
 
 }

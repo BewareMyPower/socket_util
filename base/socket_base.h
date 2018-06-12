@@ -14,6 +14,17 @@ namespace socket_util {
 
 class SocketBase : noncopyable {
 public:
+    SocketBase(SocketBase&& rhs) noexcept : fd_(rhs.fd_) {
+        rhs.fd_ = -1;
+    }
+
+    SocketBase& operator=(SocketBase&& rhs) noexcept {
+        Close();
+        fd_ = rhs.fd_;
+        rhs.fd_ = -1;
+        return *this;
+    }
+
     /* socket API的简单包装，返回false即调用错误，等同于原API返回-1 */
 
     bool Listen(int backlog = 128) const noexcept {
@@ -49,7 +60,6 @@ public:
     }
 
     /** 针对socket的实用函数 */
-
     // 取得内部文件描述符
     int GetFd() const noexcept { return fd_; }
 
@@ -67,14 +77,15 @@ public:
     bool SendString(const std::string& str) const noexcept {
         return SendString(str.data(), str.size());
     }
+    
+    // 若doit为true，设置套接字为非阻塞模式，否则取消套接字的非阻塞位
+    // 若设置/取消失败则返回false，errno被设置
+    bool SetNonblocking(bool doit = true) const noexcept;
 
 protected:
-    // 禁止直接构造该基类，而是在派生类的构造函数中调用该类的构造函数
-    explicit SocketBase(int fd) noexcept : fd_(fd) {}
-    virtual ~SocketBase() { Close(); }
-
-private:
-    int fd_;
+    /* 禁止直接构造该基类 */
+    SocketBase() = default;
+    int fd_ = -1;  // 内部套接字描述符
 };
 
 }

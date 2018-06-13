@@ -23,15 +23,11 @@ InetAddress::InetAddress(const SA_IN& addr) {
     memcpy(&addr_, &addr, sizeof(addr));
 }
 
-std::string InetAddress::GetIp() const {
+std::string InetAddress::GetIp() const noexcept {
     char buf[INET_ADDRSTRLEN];
     const char* ret = ::inet_ntop(AF_INET, &addr_.sin_addr, buf, INET_ADDRSTRLEN);
     error_handler::ExitIf(!ret, errno, "inet_ntop");
     return ret;
-}
-
-uint16_t InetAddress::GetPort() const {
-    return ntohs(addr_.sin_port);
 }
 
 }

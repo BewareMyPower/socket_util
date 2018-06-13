@@ -12,15 +12,17 @@ public:
     using SA = struct sockaddr;
     using SA_IN = struct sockaddr_in;
 
-    explicit InetAddress(const char* ip, uint16_t port);
+    explicit InetAddress(const char* ip, uint16_t port);  // ip不合法则报错并终止进程
     explicit InetAddress(const SA_IN& addr);
-    
-    std::string GetIp() const;
-    uint16_t GetPort() const;
 
-    std::string ToString() const { return GetIp() + ":" + std::to_string(GetPort()); }
+    std::string GetIp() const noexcept;  // ip不合法则报错并终止进程
+    uint16_t GetPort() const noexcept { return ntohs(addr_.sin_port); }
 
-    const SA* GetSockaddrPtr() const;
+    std::string ToString() const noexcept { return GetIp() + ":" + std::to_string(GetPort()); }
+
+    const SA* GetSockaddrPtr() const noexcept;
+
+    bool IsInvalid() const noexcept { return addr_.sin_port == 0; }
 
 private:
     SA_IN addr_;

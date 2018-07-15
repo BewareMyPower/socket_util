@@ -80,6 +80,11 @@ inline ssize_t recv(int fd, char* buf, size_t len, int flags = 0) noexcept {
     return ::recv(fd, buf, len, flags);
 }
 
+template <size_t N>
+inline ssize_t recv(int fd, char (&buf)[N], int flags = 0) noexcept {
+    return ::recv(fd, buf, N, flags);
+}
+
 inline InetAddress getsockname(int sockfd) noexcept {
     InetAddress addr;
     socklen_t len = addr.LENGTH;

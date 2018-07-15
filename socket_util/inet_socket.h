@@ -12,9 +12,25 @@ namespace inet {
 // ----------------------------------------------------------------------------
 // 自定义的实用函数
 
-// 创建一个监听到指定地址的TCP套接字, 若创建失败则返回-1，errno被设置
+/**
+ * 创建监听到指定地址的TCP套接字
+ * @param addr 套接字绑定的地址
+ * @param nonblocking 若为true(默认)则套接字为非阻塞的
+ * @paramm backlog 同listen(2)的参数2
+ * @return 若创建、绑定、监听成功则返回套接字描述符，
+ *      否则返回-1，errno被设置，成功创建的套接字会被关闭
+ */
 int createTcpServer(const InetAddress& addr,
-                    bool nonblocking = true, int backlog = SOMAXCONN);
+                    bool nonblocking = true, int backlog = SOMAXCONN) noexcept;
+
+/**
+ * 创建连接到指定地址的TCP套接字
+ * 实现使用阻塞式connect
+ * @param addr 要连接的远程套接字的地址
+ * @return 若创建、连接成功则返回套接字描述符
+ *      否则返回-1，errno被设置，成功创建的套接字会被关闭
+ */
+int createTcpClient(const InetAddress& addr) noexcept;
 
 // ----------------------------------------------------------------------------
 // socket底层系统调用的简单包装

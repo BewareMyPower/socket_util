@@ -1,8 +1,12 @@
 // inet_socket.h:
 #pragma once
 
+#include <string.h>
 #include <sys/socket.h>
+
+#include <string>
 #include <utility>  // std::pair
+
 #include "inet_address.h"
 
 namespace socket_util {
@@ -58,6 +62,22 @@ inline int accept(int sockfd, InetAddress& addr) noexcept {
 
 inline int accept(int sockfd) noexcept {
     return ::accept(sockfd, nullptr, nullptr);
+}
+
+inline ssize_t send(int fd, const char* buf, size_t len, int flags = 0) noexcept {
+    return ::send(fd, buf, len, flags);
+}
+
+inline ssize_t send(int fd, const char* buf, int flags = 0) noexcept {
+    return ::send(fd, buf, strlen(buf), flags);
+}
+
+inline ssize_t send(int fd, const std::string& buf, int flags = 0) noexcept {
+    return ::send(fd, buf.data(), buf.size(), flags);
+}
+
+inline ssize_t recv(int fd, char* buf, size_t len, int flags = 0) noexcept {
+    return ::recv(fd, buf, len, flags);
 }
 
 inline InetAddress getsockname(int sockfd) noexcept {

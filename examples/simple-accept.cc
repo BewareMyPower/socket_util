@@ -22,14 +22,13 @@ int main() {
     return 0;
 }
 /**
-# ./simple-accept &
-[1] 2929
+~/socket_util/examples# ./simple-accept &
+[1] 7924
 # server listen at 0.0.0.0:8888
 
 # ./simple-connect
 client start connect...
-accept client: 127.0.0.1:54510
-client connect success
+accept client: 127.0.0.1:39998
 server close connection
 client close connection
 [1]+  Done                    ./simple-accept

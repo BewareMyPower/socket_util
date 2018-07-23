@@ -70,11 +70,38 @@ inline ssize_t send(int fd, const char* buf, size_t len, int flags = 0) noexcept
 }
 
 inline ssize_t send(int fd, const char* buf, int flags = 0) noexcept {
-    return ::send(fd, buf, strlen(buf), flags);
+    return inet::send(fd, buf, strlen(buf), flags);
 }
 
 inline ssize_t send(int fd, const std::string& buf, int flags = 0) noexcept {
-    return ::send(fd, buf.data(), buf.size(), flags);
+    return inet::send(fd, buf.data(), buf.size(), flags);
+}
+
+// return true if all bytes of `buf[len]` were sent
+inline bool sendAll(int fd, const char* buf, size_t len, int flags) noexcept {
+    size_t num_left = len;
+    while (num_left > 0) {
+        ssize_t num_send = inet::send(fd, buf, num_left, flags);
+        if (num_send == -1) {
+            if (errno == EINTR) {
+                num_send = 0;
+            } else {  // fatal error
+                return false;
+            }
+        }
+
+        num_left -= num_send;
+        buf += num_send;
+    }
+    return true;
+}
+
+inline bool sendAll(int fd, const char* buf, int flags) noexcept {
+    return inet::send(fd, buf, strlen(buf), flags);
+}
+
+inline bool sendAll(int fd, const std::string& buf, int flags) noexcept {
+    return inet::send(fd, buf.data(), buf.size(), flags);
 }
 
 inline ssize_t recv(int fd, char* buf, size_t len, int flags = 0) noexcept {

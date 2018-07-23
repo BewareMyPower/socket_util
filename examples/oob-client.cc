@@ -7,17 +7,12 @@ using namespace socket_util;
 using namespace socket_util::util;
 
 int main(int argc, char* argv[]) {
-    error::ExitIf(argc <= 2, "Usage: %s ip port", basename(argv[0]));
-
-    const char* ip = argv[1];
-    uint16_t port = atoi(argv[2]);
-    int sockfd = inet::createTcpClient({ip, port});
-    error::ExitIf(sockfd == -1, errno, "createTcpClient");
+    int sockfd = inet::createTcpClient({"127.0.0.1", 8888});
 
     // 依次发送普通数据、带外数据、普通数据
-    inet::send(sockfd, "123");
-    inet::send(sockfd, "abc", MSG_OOB);
-    inet::send(sockfd, "123");
+    inet::sendAll(sockfd, "123");
+    inet::sendAll(sockfd, "abc", MSG_OOB);
+    inet::sendAll(sockfd, "123");
 
     return 0;
 }

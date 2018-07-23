@@ -15,12 +15,8 @@ void sigurg_handler(int sig) {
     }
 }
 
-int main(int argc, char* argv[]) {
-    error::ExitIf(argc <= 2, "Usage: %s ip port", basename(argv[0]));
-
-    const char* ip = argv[1];
-    uint16_t port = atoi(argv[2]);
-    int sockfd = inet::createTcpServer({ip, port}, false);
+int main() {
+    int sockfd = inet::createTcpServer({"127.0.0.1", 8888}, false);
     error::ExitIf(sockfd == -1, errno, "createTcpServer");
 
     // 与客户建立连接
@@ -63,9 +59,9 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 /**
-~/socket_util/examples# ./oob-server 127.0.0.1 8888 &
+~/socket_util/examples# ./oob-server &
 [1] 13355
-~/socket_util/examples# ./oob-client 127.0.0.1 8888
+~/socket_util/examples# ./oob-client
 got 3 bytes of normal data '123'
 got 1 bytes of normal data 'c'
 ~/socket_util/examples# got 2 bytes of normal data 'ab'

@@ -1,10 +1,10 @@
 ROOT = ..
 CC = g++
-FLAGS = -std=c++11
+FLAGS = -std=c++11 #-O2
 SOURCE = $(ROOT)/socket_util
 
 LIBSOCKUTIL = $(SOURCE)/libsockutil.a
-PROGS = simple-connect simple-accept
+PROGS = simple-connect simple-accept oob-client oob-server
 
 all: $(PROGS)
 

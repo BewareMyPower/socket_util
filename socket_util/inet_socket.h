@@ -6,6 +6,7 @@
 
 #include <string>
 #include <utility>  // std::pair
+#include <stdio.h>  //TODO
 
 #include "inet_address.h"
 
@@ -82,7 +83,7 @@ inline ssize_t recv(int fd, char* buf, size_t len, int flags = 0) noexcept {
 
 template <size_t N>
 inline ssize_t recv(int fd, char (&buf)[N], int flags = 0) noexcept {
-    return ::recv(fd, buf, N, flags);
+    return ::recv(fd, &buf[0], N, flags);
 }
 
 inline InetAddress getsockname(int sockfd) noexcept {

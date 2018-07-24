@@ -70,11 +70,11 @@ inline ssize_t send(int fd, const char* buf, size_t len, int flags = 0) noexcept
 }
 
 inline ssize_t send(int fd, const char* buf, int flags = 0) noexcept {
-    return inet::send(fd, buf, strlen(buf), flags);
+    return ::send(fd, buf, strlen(buf), flags);
 }
 
 inline ssize_t send(int fd, const std::string& buf, int flags = 0) noexcept {
-    return inet::send(fd, buf.data(), buf.size(), flags);
+    return ::send(fd, buf.data(), buf.size(), flags);
 }
 
 // return true if all bytes of `buf[len]` were sent
@@ -97,11 +97,11 @@ inline bool sendAll(int fd, const char* buf, size_t len, int flags = 0) noexcept
 }
 
 inline bool sendAll(int fd, const char* buf, int flags = 0) noexcept {
-    return inet::send(fd, buf, strlen(buf), flags);
+    return ::send(fd, buf, strlen(buf), flags);
 }
 
 inline bool sendAll(int fd, const std::string& buf, int flags = 0) noexcept {
-    return inet::send(fd, buf.data(), buf.size(), flags);
+    return ::send(fd, buf.data(), buf.size(), flags);
 }
 
 inline ssize_t recv(int fd, char* buf, size_t len, int flags = 0) noexcept {

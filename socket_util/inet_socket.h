@@ -65,23 +65,36 @@ inline int accept(int sockfd) noexcept {
     return ::accept(sockfd, nullptr, nullptr);
 }
 
-inline ssize_t send(int fd, const char* buf, size_t len, int flags = 0) noexcept {
-    return ::send(fd, buf, len, flags);
+inline ssize_t send(int sockfd, const char* buf, size_t len, int flags = 0) noexcept {
+    return ::send(sockfd, buf, len, flags);
 }
 
-inline ssize_t send(int fd, const char* buf, int flags = 0) noexcept {
-    return ::send(fd, buf, strlen(buf), flags);
+inline ssize_t send(int sockfd, const char* buf, int flags = 0) noexcept {
+    return inet::send(sockfd, buf, strlen(buf), flags);
 }
 
-inline ssize_t send(int fd, const std::string& buf, int flags = 0) noexcept {
-    return ::send(fd, buf.data(), buf.size(), flags);
+inline ssize_t send(int sockfd, const std::string& buf, int flags = 0) noexcept {
+    return inet::send(sockfd, buf.data(), buf.size(), flags);
+}
+
+inline ssize_t sendto(int sockfd, const char* buf, size_t len,
+        InetAddress& addr, int flags = 0) noexcept {
+    return ::sendto(sockfd, buf, len, flags, addr.getSockaddrPtr(), InetAddress::LENGTH);
+}
+
+inline ssize_t sendto(int sockfd, const char* buf, InetAddress& addr, int flags = 0) noexcept {
+    return inet::sendto(sockfd, buf, strlen(buf), addr, flags);
+}
+
+inline ssize_t sendto(int sockfd, const std::string& buf, InetAddress& addr, int flags = 0) noexcept {
+    return inet::sendto(sockfd, buf.data(), buf.size(), addr, flags);
 }
 
 // return true if all bytes of `buf[len]` were sent
-inline bool sendAll(int fd, const char* buf, size_t len, int flags = 0) noexcept {
+inline bool sendAll(int sockfd, const char* buf, size_t len, int flags = 0) noexcept {
     size_t num_left = len;
     while (num_left > 0) {
-        ssize_t num_send = inet::send(fd, buf, num_left, flags);
+        ssize_t num_send = inet::send(sockfd, buf, num_left, flags);
         if (num_send == -1) {
             if (errno == EINTR) {
                 num_send = 0;
@@ -96,21 +109,33 @@ inline bool sendAll(int fd, const char* buf, size_t len, int flags = 0) noexcept
     return true;
 }
 
-inline bool sendAll(int fd, const char* buf, int flags = 0) noexcept {
-    return ::send(fd, buf, strlen(buf), flags);
+inline bool sendAll(int sockfd, const char* buf, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, buf, strlen(buf), flags);
 }
 
-inline bool sendAll(int fd, const std::string& buf, int flags = 0) noexcept {
-    return ::send(fd, buf.data(), buf.size(), flags);
+inline bool sendAll(int sockfd, const std::string& buf, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, buf.data(), buf.size(), flags);
 }
 
-inline ssize_t recv(int fd, char* buf, size_t len, int flags = 0) noexcept {
-    return ::recv(fd, buf, len, flags);
+inline ssize_t recv(int sockfd, char* buf, size_t len, int flags = 0) noexcept {
+    return ::recv(sockfd, buf, len, flags);
+}
+
+inline ssize_t recvfrom(int sockfd, char* buf, size_t len,
+        InetAddress& addr, int flags = 0) noexcept {
+    socklen_t addrlen = InetAddress::LENGTH;
+    return ::recvfrom(sockfd, buf, len, flags, addr.getSockaddrPtr(), &addrlen);
 }
 
 template <size_t N>
-inline ssize_t recv(int fd, char (&buf)[N], int flags = 0) noexcept {
-    return ::recv(fd, &buf[0], N, flags);
+inline ssize_t recv(int sockfd, char (&buf)[N], int flags = 0) noexcept {
+    return ::recv(sockfd, &buf[0], N, flags);
+}
+
+template <size_t N>
+inline ssize_t recvfrom(int sockfd, char (&buf)[N],
+        InetAddress& addr, int flags = 0) noexcept {
+    return inet::recvfrom(sockfd, buf, N, addr, flags);
 }
 
 inline InetAddress getsockname(int sockfd) noexcept {

@@ -19,7 +19,6 @@ int main() {
     int sockfd = inet::createTcpServer({"127.0.0.1", 8888}, false);
     error::ExitIf(sockfd == -1, errno, "createTcpServer");
 
-    // 与客户建立连接
     int connfd = inet::accept(sockfd);
     error::ExitIf(connfd == -1, errno, "accept");
 
@@ -33,8 +32,6 @@ int main() {
     for (size_t i = 0; ; ++i) {
         int flags = (is_urg_data ? MSG_OOB : 0);
         int num_recv = static_cast<int>(inet::recv(connfd, buffer, flags));
-        //ssize_t num_recv = inet::recv(connfd, buffer, sizeof(buffer), flags);
-        is_urg_data = false;
         if (num_recv == -1) {
             if (errno == EINTR)
                 continue;
@@ -46,10 +43,8 @@ int main() {
             break;
 
         printf("got %d bytes of %s data '%.*s'\n",
-                static_cast<int>(num_recv),
-                is_urg_data ? "oob" : "normal",
-                static_cast<int>(num_recv),
-                buffer);
+                num_recv, (is_urg_data ? "oob" : "normal"), num_recv, buffer);
+        is_urg_data = false;
 
         sleep(1);
     }

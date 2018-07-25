@@ -4,14 +4,14 @@
 ```
 socket_util
   \--inet
+  \--error
   \--util
-       \--error
 ```
-其中util单独放在一个目录中，因为均为header-only库，直接包含即可，
+其中util和error单独放在一个目录[helpers](./helpers)中，因为均为header-only库，直接包含即可。
 目录层次
 ```
 socket_util
-  \--util
+  \--helpers
 examples
 ```
 examples目录存放示例程序，以及平时的测试程序

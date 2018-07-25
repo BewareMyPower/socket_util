@@ -90,32 +90,6 @@ inline ssize_t sendto(int sockfd, const std::string& buf, InetAddress& addr, int
     return inet::sendto(sockfd, buf.data(), buf.size(), addr, flags);
 }
 
-// return true if all bytes of `buf[len]` were sent
-inline bool sendAll(int sockfd, const char* buf, size_t len, int flags = 0) noexcept {
-    size_t num_left = len;
-    while (num_left > 0) {
-        ssize_t num_send = inet::send(sockfd, buf, num_left, flags);
-        if (num_send == -1) {
-            if (errno == EINTR) {
-                num_send = 0;
-            } else {  // fatal error
-                return false;
-            }
-        }
-
-        num_left -= num_send;
-        buf += num_send;
-    }
-    return true;
-}
-
-inline bool sendAll(int sockfd, const char* buf, int flags = 0) noexcept {
-    return inet::sendAll(sockfd, buf, strlen(buf), flags);
-}
-
-inline bool sendAll(int sockfd, const std::string& buf, int flags = 0) noexcept {
-    return inet::sendAll(sockfd, buf.data(), buf.size(), flags);
-}
 
 inline ssize_t recv(int sockfd, char* buf, size_t len, int flags = 0) noexcept {
     return ::recv(sockfd, buf, len, flags);
@@ -170,6 +144,35 @@ inline std::pair<OptType, bool> getsockopt(int sockfd, int level, int optname) n
     int ret = ::getsockopt(sockfd, level, optname, &optval, &optlen);
 
     return std::make_pair(optval, ret != -1);
+}
+
+// 基于包装后的socket API实现的实用函数
+
+// return true if all bytes of `buf[len]` were sent
+inline bool sendAll(int sockfd, const char* buf, size_t len, int flags = 0) noexcept {
+    size_t num_left = len;
+    while (num_left > 0) {
+        ssize_t num_send = inet::send(sockfd, buf, num_left, flags);
+        if (num_send == -1) {
+            if (errno == EINTR) {
+                num_send = 0;
+            } else {  // fatal error
+                return false;
+            }
+        }
+
+        num_left -= num_send;
+        buf += num_send;
+    }
+    return true;
+}
+
+inline bool sendAll(int sockfd, const char* buf, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, buf, strlen(buf), flags);
+}
+
+inline bool sendAll(int sockfd, const std::string& buf, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, buf.data(), buf.size(), flags);
 }
 
 }  // END namespace socket_util::inet

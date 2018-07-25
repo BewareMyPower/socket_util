@@ -1,19 +1,12 @@
 // oob-server.cc: 接收带外数据
 #include "inet_socket.h"
-#include "util/errors.hpp"
+#include "helpers/errors.hpp"
 #include <fcntl.h>
 #include <signal.h>
 
 using namespace socket_util;
-using namespace socket_util::util;
 
 static volatile bool is_urg_data = false;
-
-void sigurg_handler(int sig) {
-    if (sig == SIGURG) {
-        is_urg_data = true;
-    }
-}
 
 int main() {
     int sockfd = inet::createTcpServer({"127.0.0.1", 8888}, false);
@@ -25,7 +18,7 @@ int main() {
     // 对带外数据产生的信号进行处理
     if (-1 == fcntl(connfd, F_SETOWN, getpid()))
         error::Exit(errno, "fcntl %d F_SETOWN", connfd);
-    signal(SIGURG, sigurg_handler);
+    signal(SIGURG, [](int) { is_urg_data = true; });
 
     char buffer[1024];
 
@@ -46,6 +39,8 @@ int main() {
                 num_recv, (is_urg_data ? "oob" : "normal"), num_recv, buffer);
         is_urg_data = false;
 
+        // 因为不清楚带外数据到达的具体时刻，所以休眠1秒等待信号
+        // 否则可能因为读取所有可读数据之后退出循环
         sleep(1);
     }
 

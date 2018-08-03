@@ -9,8 +9,7 @@ using namespace socket_util;
 static volatile bool is_urg_data = false;
 
 int main() {
-    int sockfd = inet::createTcpServer({"127.0.0.1", 8888}, false);
-    error::ExitIf(sockfd == -1, errno, "createTcpServer");
+    int sockfd = inet::createTcpServer("localhost:8888", false);
 
     int connfd = inet::accept(sockfd);
     error::ExitIf(connfd == -1, errno, "accept");
@@ -50,10 +49,12 @@ int main() {
 }
 /**
 ~/socket_util/examples# ./oob-server &
-[1] 13355
+[1] 17830
+~/socket_util/examples# netstat -anpt | grep 17830
+tcp        0      0 127.0.0.1:8888          0.0.0.0:*               LISTEN      17830/oob-server
 ~/socket_util/examples# ./oob-client
 got 3 bytes of normal data '123'
-got 1 bytes of normal data 'c'
+got 1 bytes of oob data 'c'
 ~/socket_util/examples# got 2 bytes of normal data 'ab'
 got 3 bytes of normal data '123'
 

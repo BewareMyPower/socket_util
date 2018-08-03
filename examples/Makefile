@@ -4,7 +4,7 @@ FLAGS = -std=c++11 #-O2
 SOURCE = $(ROOT)/socket_util
 
 LIBSOCKUTIL = $(SOURCE)/libsockutil.a
-PROGS = oob-client oob-server
+PROGS = oob-client oob-server address_test
 
 all: $(PROGS)
 

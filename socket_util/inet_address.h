@@ -21,6 +21,9 @@ namespace socket_util {
  * auto sa_addr_ptr = addr1.getSockaddrPtr();
  * auto sa_addr_len = InetAddress::LENGTH;
  * accept(sockfd, sa_addr_ptr, &sa_addr_len);
+ *
+ * 支持用工厂方法来简单地构造
+ * auto address = InetAddress::newInstance("localhost:https")
  */
 class InetAddress {
     friend std::ostream& operator << (std::ostream& os, const InetAddress& addr) {
@@ -30,14 +33,43 @@ class InetAddress {
 public:
     constexpr static socklen_t LENGTH = sizeof(struct sockaddr_in);
 
-    explicit InetAddress();  // 0.0.0.0:0
-    InetAddress(const char* ip, uint16_t port);  // 若IP设置失败则置为"255.255.255.255"对应INADDR_NONE
-    InetAddress(const struct sockaddr_in& addr);
+    explicit InetAddress() noexcept;  // 0.0.0.0:0
+    InetAddress(const struct sockaddr_in& addr) noexcept;
+
+    // 若IP为NULL则报错并退出程序
+    // 若IP不合法则设置IP为INADDR_NONE(即255.255.255.255)
+    InetAddress(const char* ip, uint16_t port) noexcept;
+
+    /**
+     * 功能: 通过主机名和服务名来构造InetAddress对象
+     * 参数:
+     *   host 主机名或者点分十进制的IP地址，若为NULL或空字符串则为"127.0.0.1"
+     *   serv 服务名或者端口号
+     * 返回值:
+     *   若构造成功则返回对应InetAddress对象，否则打印错误到标准错误流并退出程序
+     */
+    static InetAddress newInstance(const char* host, const char* serv) noexcept;
+
+    /**
+     * 功能: 通过':'分隔的主机名和服务名来构造InetAddress对象
+     * 参数:
+     *   address ':'分隔后的2个字符串同newInstance重载的host和serv，参考下列示例
+     *     127.0.0.1:443
+     *     127.0.0.1:https
+     *     localhost:443
+     *     localhost:https
+     *     :443
+     *     :https
+     * 返回值:
+     *   若构造成功则返回对应InetAddress对象，否则打印错误到标准错误流并退出程序
+     */
+    static InetAddress newInstance(std::string address) noexcept;
 
     InetAddress(const InetAddress&) = default;
     InetAddress& operator=(const InetAddress&) = default;
 
-    bool setIp(const char* new_ip) noexcept;  // 若IP不合法则返回false，且原有的IP不变
+    // 若IP为NULL则报错并退出程序，若设置失败则返回false，IP不变
+    bool setIp(const char* new_ip) noexcept;
     void setPort(uint16_t new_port) noexcept { addr_.sin_port = htons(new_port); }
 
     std::string getIp() const noexcept;

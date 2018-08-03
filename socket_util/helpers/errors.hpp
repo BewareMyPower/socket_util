@@ -25,21 +25,17 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <string>
+#include <utility>  // std::forward
 
 namespace socket_util {
 
 namespace error {
 
-const char* failed_str = "???";
-const size_t BUFFER_SIZE = 1024;  // 内部缓冲区大小
+static const char* failed_str = "???";
+constexpr size_t BUFFER_SIZE = 1024;  // 内部缓冲区大小
 
 inline void Print(const char* message) {
     write(STDERR_FILENO, message, strlen(message));
-}
-
-inline void Print(const std::string& message) {
-    write(STDERR_FILENO, message.data(), message.size());
 }
 
 template <typename ...Args>
@@ -51,10 +47,6 @@ inline void Println(const char* message) {
     char buffer[BUFFER_SIZE];
     int num_print = snprintf(buffer, sizeof(buffer), "%s\n", message);
     write(STDERR_FILENO, buffer, num_print);
-}
-
-inline void Println(const std::string& message) {
-    Println(message.data());
 }
 
 template <typename ...Args>
@@ -92,11 +84,6 @@ inline void Println(int errnum, const char* format, Args... args) {
 template <typename ...Args>
 inline void Println(int errnum, const char* message) {
     Println(errnum, "%s", message);
-}
-
-template <typename ...Args>
-inline void Println(int errnum, const std::string& message) {
-    Println(errnum, "%s", message.data());
 }
 
 template <typename ...Args>

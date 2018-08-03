@@ -6,7 +6,6 @@
 
 #include <string>
 #include <utility>  // std::pair
-#include <stdio.h>  //TODO
 
 #include "inet_address.h"
 
@@ -18,24 +17,27 @@ namespace inet {
 // 自定义的实用函数
 
 /**
- * 创建监听到指定地址的TCP套接字
- * @param addr 套接字绑定的地址
- * @param nonblocking 若为true(默认)则套接字为非阻塞的
- * @paramm backlog 同listen(2)的参数2
- * @return 若创建、绑定、监听成功则返回套接字描述符，
- *      否则返回-1，errno被设置，成功创建的套接字会被关闭
+ * 功能: 创建监听指定地址的TCP套接字
+ * 参数:
+ *   address 绑定&监听的地址，同InetAddress::newInstance()的address参数
+ *   nonblocking 默认为true，此时为非阻塞套接字
+ *   backlog 同listen(2)的参数2
+ * 返回值:
+ *   若成功创建则返回其套接字描述符，否则打印错误并退出程序
  */
-int createTcpServer(const InetAddress& addr,
-                    bool nonblocking = true, int backlog = SOMAXCONN) noexcept;
+int createTcpServer(std::string address, bool nonblocking = true,
+        int backlog = SOMAXCONN) noexcept;
 
 /**
- * 创建连接到指定地址的TCP套接字
- * 实现使用阻塞式connect
- * @param addr 要连接的远程套接字的地址
- * @return 若创建、连接成功则返回套接字描述符
- *      否则返回-1，errno被设置，成功创建的套接字会被关闭
+ * 功能: 创建连接到指定地址的TCP套接字
+ *   目前使用的阻塞式套接字，TODO: 修改成非阻塞式
+ * 参数:
+ *   address 被动连接的套接字地址，同InetAddress::newInstance()的address参数
+ * 返回值:
+ *   若成功创建则返回其套接字描述符，否则返回-1。
+ *   不同于createTcpServer直接退出，因为客户端在连接失败时可能会采取其他措施
  */
-int createTcpClient(const InetAddress& addr) noexcept;
+int createTcpClient(std::string address) noexcept;
 
 // ----------------------------------------------------------------------------
 // socket底层系统调用的简单包装
@@ -146,6 +148,7 @@ inline std::pair<OptType, bool> getsockopt(int sockfd, int level, int optname) n
     return std::make_pair(optval, ret != -1);
 }
 
+// ----------------------------------------------------------------------------
 // 基于包装后的socket API实现的实用函数
 
 // return true if all bytes of `buf[len]` were sent

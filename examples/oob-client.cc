@@ -1,6 +1,5 @@
 // oob-client.cc: 发送带外数据
 #include "inet_socket.h"
-
 using namespace socket_util;
 
 int main(int argc, char* argv[]) {

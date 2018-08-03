@@ -1,10 +1,10 @@
 // oob-server.cc: 接收带外数据
 #include "inet_socket.h"
 #include "helpers/errors.hpp"
+using namespace socket_util;
+
 #include <fcntl.h>
 #include <signal.h>
-
-using namespace socket_util;
 
 static volatile bool is_urg_data = false;
 

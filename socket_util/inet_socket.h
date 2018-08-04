@@ -71,10 +71,6 @@ inline ssize_t send(int sockfd, const char* buf, size_t len, int flags = 0) noex
     return ::send(sockfd, buf, len, flags);
 }
 
-inline ssize_t send(int sockfd, const char* buf, int flags = 0) noexcept {
-    return inet::send(sockfd, buf, strlen(buf), flags);
-}
-
 inline ssize_t send(int sockfd, const std::string& buf, int flags = 0) noexcept {
     return inet::send(sockfd, buf.data(), buf.size(), flags);
 }
@@ -84,14 +80,9 @@ inline ssize_t sendto(int sockfd, const char* buf, size_t len,
     return ::sendto(sockfd, buf, len, flags, addr.getSockaddrPtr(), InetAddress::LENGTH);
 }
 
-inline ssize_t sendto(int sockfd, const char* buf, InetAddress& addr, int flags = 0) noexcept {
-    return inet::sendto(sockfd, buf, strlen(buf), addr, flags);
-}
-
 inline ssize_t sendto(int sockfd, const std::string& buf, InetAddress& addr, int flags = 0) noexcept {
     return inet::sendto(sockfd, buf.data(), buf.size(), addr, flags);
 }
-
 
 inline ssize_t recv(int sockfd, char* buf, size_t len, int flags = 0) noexcept {
     return ::recv(sockfd, buf, len, flags);

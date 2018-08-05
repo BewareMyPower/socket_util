@@ -5,7 +5,7 @@ SOURCE = $(ROOT)/socket_util
 
 LIBSOCKUTIL = $(SOURCE)/libsockutil.a
 PROGS = oob-client oob-server address-test cgi-server simple-client \
-		writev sendfile splice
+		writev sendfile splice echo-client
 
 all: $(PROGS)
 

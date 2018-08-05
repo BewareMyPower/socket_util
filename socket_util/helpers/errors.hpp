@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/uio.h>
 #include <unistd.h>
 
 #include <utility>  // std::forward
@@ -32,7 +33,7 @@ namespace socket_util {
 namespace error {
 
 static const char* failed_str = "???";
-constexpr size_t BUFFER_SIZE = 1024;  // 内部缓冲区大小
+constexpr size_t BUFFER_SIZE = 4096;  // 内部缓冲区大小，超过大小则截断错误信息
 
 inline void Print(const char* message) {
     write(STDERR_FILENO, message, strlen(message));
@@ -44,9 +45,17 @@ inline void Print(const char* format, Args... args) {
 }
 
 inline void Println(const char* message) {
-    char buffer[BUFFER_SIZE];
-    int num_print = snprintf(buffer, sizeof(buffer), "%s\n", message);
-    write(STDERR_FILENO, buffer, num_print);
+    size_t len = strlen(message);
+    if (len > BUFFER_SIZE)
+        len = BUFFER_SIZE - 1;
+
+    struct iovec iv[2];
+    iv[0].iov_base = const_cast<char*>(message);
+    iv[0].iov_len = len;
+    iv[1].iov_base = const_cast<char*>("\n");
+    iv[1].iov_len = 1;
+
+    writev(STDERR_FILENO, iv, 2);
 }
 
 template <typename ...Args>
@@ -74,8 +83,7 @@ inline void Println(int errnum, const char* format, Args... args) {
 
     if (static_cast<size_t>(num_print) + 1 < sizeof(buffer)) {
         num_print += snprintf(buffer + num_print, sizeof(buffer) - num_print,
-                              ": %s\n",
-                              strerror_r(errnum, error_buffer, sizeof(error_buffer)));
+                ": %s\n", strerror_r(errnum, error_buffer, sizeof(error_buffer)));
     }
 
     write(STDERR_FILENO, buffer, num_print);

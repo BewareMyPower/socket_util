@@ -71,17 +71,9 @@ inline ssize_t send(int sockfd, const char* buf, size_t len, int flags = 0) noex
     return ::send(sockfd, buf, len, flags);
 }
 
-inline ssize_t send(int sockfd, const std::string& buf, int flags = 0) noexcept {
-    return inet::send(sockfd, buf.data(), buf.size(), flags);
-}
-
 inline ssize_t sendto(int sockfd, const char* buf, size_t len,
         InetAddress& addr, int flags = 0) noexcept {
     return ::sendto(sockfd, buf, len, flags, addr.getSockaddrPtr(), InetAddress::LENGTH);
-}
-
-inline ssize_t sendto(int sockfd, const std::string& buf, InetAddress& addr, int flags = 0) noexcept {
-    return inet::sendto(sockfd, buf.data(), buf.size(), addr, flags);
 }
 
 inline ssize_t recv(int sockfd, char* buf, size_t len, int flags = 0) noexcept {
@@ -92,17 +84,6 @@ inline ssize_t recvfrom(int sockfd, char* buf, size_t len,
         InetAddress& addr, int flags = 0) noexcept {
     socklen_t addrlen = InetAddress::LENGTH;
     return ::recvfrom(sockfd, buf, len, flags, addr.getSockaddrPtr(), &addrlen);
-}
-
-template <size_t N>
-inline ssize_t recv(int sockfd, char (&buf)[N], int flags = 0) noexcept {
-    return ::recv(sockfd, &buf[0], N, flags);
-}
-
-template <size_t N>
-inline ssize_t recvfrom(int sockfd, char (&buf)[N],
-        InetAddress& addr, int flags = 0) noexcept {
-    return inet::recvfrom(sockfd, buf, N, addr, flags);
 }
 
 inline InetAddress getsockname(int sockfd) noexcept {
@@ -161,8 +142,12 @@ inline bool sendAll(int sockfd, const char* buf, size_t len, int flags = 0) noex
     return true;
 }
 
-inline bool sendAll(int sockfd, const std::string& buf, int flags = 0) noexcept {
-    return inet::sendAll(sockfd, buf.data(), buf.size(), flags);
+inline bool sendCString(int sockfd, const char* str, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, str, strlen(str), flags);
+}
+
+inline bool sendStdString(int sockfd, const std::string& str, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, str.data(), str.size(), flags);
 }
 
 }  // END namespace socket_util::inet

@@ -161,10 +161,6 @@ inline bool sendAll(int sockfd, const char* buf, size_t len, int flags = 0) noex
     return true;
 }
 
-inline bool sendAll(int sockfd, const char* buf, int flags = 0) noexcept {
-    return inet::sendAll(sockfd, buf, strlen(buf), flags);
-}
-
 inline bool sendAll(int sockfd, const std::string& buf, int flags = 0) noexcept {
     return inet::sendAll(sockfd, buf.data(), buf.size(), flags);
 }

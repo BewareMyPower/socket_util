@@ -1,7 +1,5 @@
 // oob-server.cc: 接收带外数据
-#include "inet_socket.h"
-#include "helpers/errors.hpp"
-using namespace socket_util;
+#include "helper.h"
 
 #include <fcntl.h>
 #include <signal.h>
@@ -9,10 +7,7 @@ using namespace socket_util;
 static volatile bool is_urg_data = false;
 
 int main() {
-    int sockfd = inet::createTcpServer("localhost:8888", false);
-
-    int connfd = inet::accept(sockfd);
-    error::ExitIf(connfd == -1, errno, "accept");
+    int connfd = helper::acceptOneConnect("localhost:8888");
 
     // 对带外数据产生的信号进行处理
     if (-1 == fcntl(connfd, F_SETOWN, getpid()))
@@ -44,7 +39,6 @@ int main() {
     }
 
     close(connfd);
-    close(sockfd);
     return 0;
 }
 /**

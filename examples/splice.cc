@@ -13,9 +13,9 @@ int main() {
                 32768, SPLICE_F_MORE | SPLICE_F_MOVE);
         if (num_recv == -1) {
             error::Exit(errno, "splice");
-        } else if (num_recv == 0) {  // EOF
+        } else if (num_recv == 0) {
             close(connfd);
-            printf("[server] closed");
+            printf("[server] closed\n");
             break;
         } else {
             // 将管道的输出定向到connfd客户连接文件描述符
@@ -25,6 +25,5 @@ int main() {
             }
         }
     }
-
     return 0;
 }

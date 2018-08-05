@@ -21,8 +21,7 @@ int main() {
                 num_send, static_cast<long>(statbuf.st_size));
     } else {
         printf("sendfile() success!\n");
+        close(connfd);
     }
-
-    close(connfd);
     return 0;
 }

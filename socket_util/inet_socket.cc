@@ -7,7 +7,7 @@ namespace socket_util {
 
 namespace inet {
 
-int createTcpServer(std::string address, bool nonblocking, int backlog) noexcept {
+int createTcpServer(std::string&& address, bool nonblocking, int backlog) noexcept {
     int sockfd = inet::socket();
     error::ExitIf(sockfd == -1, errno, "socket");
 
@@ -24,7 +24,7 @@ int createTcpServer(std::string address, bool nonblocking, int backlog) noexcept
     if (!inet::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, 1))
         error::Exit(errno, "setsockopt SOL_SOCKET SO_REUSEADDR 1");
 
-    auto&& inet_address = InetAddress::newInstance(address);
+    auto&& inet_address = InetAddress::newInstance(std::move(address));
     if (!inet::bind(sockfd, inet_address))
         error::Exit(errno, "bind");
 
@@ -34,12 +34,12 @@ int createTcpServer(std::string address, bool nonblocking, int backlog) noexcept
     return sockfd;
 }
 
-int createTcpClient(std::string address) noexcept {
+int createTcpClient(std::string&& address) noexcept {
     int sockfd = inet::socket();
     if (sockfd == -1)
         return -1;
 
-    auto&& inet_address = InetAddress::newInstance(address);
+    auto&& inet_address = InetAddress::newInstance(std::move(address));
     if (!inet::connect(sockfd, inet_address)) {
         ::close(sockfd);
         return -1;

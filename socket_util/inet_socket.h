@@ -25,7 +25,7 @@ namespace inet {
  * 返回值:
  *   若成功创建则返回其套接字描述符，否则打印错误并退出程序
  */
-int createTcpServer(std::string address, bool nonblocking = true,
+int createTcpServer(std::string&& address, bool nonblocking = true,
         int backlog = SOMAXCONN) noexcept;
 
 /**
@@ -37,7 +37,7 @@ int createTcpServer(std::string address, bool nonblocking = true,
  *   若成功创建则返回其套接字描述符，否则返回-1。
  *   不同于createTcpServer直接退出，因为客户端在连接失败时可能会采取其他措施
  */
-int createTcpClient(std::string address) noexcept;
+int createTcpClient(std::string&& address) noexcept;
 
 // ----------------------------------------------------------------------------
 // socket底层系统调用的简单包装

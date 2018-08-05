@@ -1,10 +1,11 @@
 ROOT = ..
 CC = g++
-FLAGS = -std=c++11 #-O2
+FLAGS = -g -std=c++11 #-O2
 SOURCE = $(ROOT)/socket_util
 
 LIBSOCKUTIL = $(SOURCE)/libsockutil.a
-PROGS = oob-client oob-server address_test
+PROGS = oob-client oob-server address-test cgi-server simple-client \
+		writev sendfile splice
 
 all: $(PROGS)
 

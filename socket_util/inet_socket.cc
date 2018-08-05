@@ -9,27 +9,27 @@ namespace inet {
 
 int createTcpServer(std::string address, bool nonblocking, int backlog) noexcept {
     int sockfd = inet::socket();
-    error::ExitIf(sockfd == -1, errno, "socket()");
+    error::ExitIf(sockfd == -1, errno, "socket");
 
     if (nonblocking) {
         int flags = fcntl(sockfd, F_GETFL, 0);
-        error::ExitIf(flags == -1, errno, "fcntl() -GETFL");
+        error::ExitIf(flags == -1, errno, "fcntl GETFL");
 
         flags |= O_NONBLOCK;
 
         if (fcntl(sockfd, F_SETFL, 0) == -1)
-            error::Exit(errno, "fcntl() -SETFL %d", flags);
+            error::Exit(errno, "fcntl SETFL %d", flags);
     }
 
     if (!inet::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, 1))
-        error::Exit(errno, "setsockopt() SOL_SOCKET SO_REUSEADDR 1");
+        error::Exit(errno, "setsockopt SOL_SOCKET SO_REUSEADDR 1");
 
     auto&& inet_address = InetAddress::newInstance(address);
     if (!inet::bind(sockfd, inet_address))
-        error::Exit(errno, "bind()");
+        error::Exit(errno, "bind");
 
     if (!inet::listen(sockfd, backlog))
-        error::Exit("listen() %d", backlog);
+        error::Exit("listen %d", backlog);
 
     return sockfd;
 }

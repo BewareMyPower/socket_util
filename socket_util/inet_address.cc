@@ -63,7 +63,7 @@ InetAddress InetAddress::newInstance(const char* host, const char* serv) noexcep
     }
 }
 
-InetAddress InetAddress::newInstance(std::string address) noexcept {
+InetAddress InetAddress::newInstance(std::string&& address) noexcept {
     size_t pos_colon = address.find(":");
     if (pos_colon == std::string::npos)
         error::Exit("%s doesn't contain ':'", address.data());

@@ -63,7 +63,7 @@ public:
      * 返回值:
      *   若构造成功则返回对应InetAddress对象，否则打印错误到标准错误流并退出程序
      */
-    static InetAddress newInstance(std::string address) noexcept;
+    static InetAddress newInstance(std::string&& address) noexcept;
 
     InetAddress(const InetAddress&) = default;
     InetAddress& operator=(const InetAddress&) = default;

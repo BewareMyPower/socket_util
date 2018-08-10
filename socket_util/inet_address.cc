@@ -74,6 +74,17 @@ InetAddress InetAddress::newInstance(std::string&& address) noexcept {
     return newInstance(address.data(), address.data() + pos_colon + 1);
 }
 
+const char* InetAddress::toCString() const noexcept {
+    static char buf[INET_ADDRSTRLEN + 6];  // 冒号和端口号(0~65535)占最多6个字符
+
+    const char* ret = ::inet_ntop(AF_INET, &addr_.sin_addr, buf, INET_ADDRSTRLEN);
+    if (!ret) return "UNKNOWN IP";
+
+    size_t curpos = strlen(buf);
+    snprintf(buf + curpos, sizeof(buf) - curpos, ":%d", getPort());
+    return buf;
+}
+
 std::string InetAddress::getIp() const noexcept {
     char buf[INET_ADDRSTRLEN];
     const char* ret = ::inet_ntop(AF_INET, &addr_.sin_addr, buf, INET_ADDRSTRLEN);

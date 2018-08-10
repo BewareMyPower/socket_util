@@ -68,10 +68,19 @@ public:
     InetAddress(const InetAddress&) = default;
     InetAddress& operator=(const InetAddress&) = default;
 
+    /**
+     * 功能: 返回"[IP]:[Port]"格式的字符串标识存储的地址，此方法不可重入
+     * 返回值:
+     *   若转换成功，则返回值可以作为newInstance()的输入参数；
+     *   若IP解析失败，则返回"UNKNOWN IP"；
+     */
+    const char* toCString() const noexcept;
+
     // 若IP为NULL则报错并退出程序，若设置失败则返回false，IP不变
     bool setIp(const char* new_ip) noexcept;
     void setPort(uint16_t new_port) noexcept { addr_.sin_port = htons(new_port); }
 
+    // 若IP解析失败，则返回"UNKNOWN IP"
     std::string getIp() const noexcept;
     uint16_t getPort() const noexcept { return ntohs(addr_.sin_port); }
 

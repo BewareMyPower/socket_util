@@ -1,8 +1,7 @@
 // helper.h
 #pragma once
 
-#include "inet_socket.h"
-#include "helpers/errors.hpp"
+#include <socket_util.h>
 using namespace socket_util;
 
 #include <fcntl.h>

@@ -50,8 +50,16 @@ inline bool connect(int sockfd, const InetAddress& addr) noexcept {
     return ::connect(sockfd, addr.getSockaddrPtr(), addr.LENGTH) != -1;
 }
 
+inline bool connect(int sockfd, std::string&& addr) noexcept {
+    return inet::connect(sockfd, InetAddress::newInstance(std::move(addr)));
+}
+
 inline bool bind(int sockfd, const InetAddress& addr) noexcept {
     return ::bind(sockfd, addr.getSockaddrPtr(), addr.LENGTH) != -1;
+}
+
+inline bool bind(int sockfd, std::string&& addr) noexcept {
+    return inet::bind(sockfd, InetAddress::newInstance(std::move(addr)));
 }
 
 inline bool listen(int sockfd, int backlog = SOMAXCONN) noexcept {

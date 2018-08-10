@@ -17,6 +17,15 @@ namespace inet {
 // 自定义的实用函数
 
 /**
+ * 功能: 设置描述符为非阻塞模式
+ * 参数:
+ *   fd 文件描述符
+ * 说明:
+ *   若设置失败，则报错并退出程序
+ */
+void setnonblocking(int fd) noexcept;
+
+/**
  * 功能: 创建监听指定地址的TCP套接字
  * 参数:
  *   address 绑定&监听的地址，同InetAddress::newInstance()的address参数

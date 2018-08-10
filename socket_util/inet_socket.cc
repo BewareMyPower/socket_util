@@ -7,19 +7,22 @@ namespace socket_util {
 
 namespace inet {
 
+void setnonblocking(int fd) noexcept {
+    int flags = fcntl(fd, F_GETFL, 0);
+    error::ExitIf(flags == -1, errno, "fcntl GETFL");
+
+    flags |= O_NONBLOCK;
+
+    if (fcntl(fd, F_SETFL, flags) == -1)
+        error::Exit(errno, "fcntl SETFL %d", flags);
+}
+
 int createTcpServer(std::string&& address, bool nonblocking, int backlog) noexcept {
     int sockfd = inet::socket();
     error::ExitIf(sockfd == -1, errno, "socket");
 
-    if (nonblocking) {
-        int flags = fcntl(sockfd, F_GETFL, 0);
-        error::ExitIf(flags == -1, errno, "fcntl GETFL");
-
-        flags |= O_NONBLOCK;
-
-        if (fcntl(sockfd, F_SETFL, 0) == -1)
-            error::Exit(errno, "fcntl SETFL %d", flags);
-    }
+    if (nonblocking)
+        setnonblocking(sockfd);
 
     if (!inet::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, 1))
         error::Exit(errno, "setsockopt SOL_SOCKET SO_REUSEADDR 1");

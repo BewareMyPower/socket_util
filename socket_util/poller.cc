@@ -51,15 +51,25 @@ bool Poller::change(int fd, uint32_t events, void* opaque) const noexcept {
 
 Poller::EventList Poller::poll(int timeout_ms) const noexcept {
     assert(timeout_ms >= 0 || timeout_ms == -1);
+    int old_errno = errno;
     EventList events(num_events_);
 
-    int num_wait = epoll_wait(epfd_, events.data(), events.size(), timeout_ms);
-    if (num_wait < 0) {
-        events.clear();
-    } else {
-        events.resize(static_cast<size_t>(num_wait));
+    while (true) {
+        int num_wait = epoll_wait(epfd_, events.data(), events.size(), timeout_ms);
+        if (num_wait < 0) {
+            if (errno == EINTR) {  // 重启被信号中断的epoll_wait
+                errno = old_errno;
+                continue;
+            } else {
+                events.clear();
+            }
+        } else if (num_wait == 0) {
+            events.clear();
+        } else {
+            events.resize(static_cast<size_t>(num_wait));
+        }
+        break;
     }
-
     return events;
 }
 

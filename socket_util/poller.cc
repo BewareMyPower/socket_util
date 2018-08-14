@@ -18,6 +18,8 @@ bool Poller::add(int fd, uint32_t events, void* opaque) noexcept {
     struct epoll_event ev;
     ev.events = events;
     ev.data.ptr = opaque;
+    if (!ev.data.ptr)
+        ev.data.fd = fd;
 
     int ret = epoll_ctl(epfd_, EPOLL_CTL_ADD, fd, &ev);
     if (ret == -1) {

@@ -24,9 +24,15 @@ public:
      * 参数:
      *   fd     待监听的文件描述符
      *   events 监听事件，同struct epoll_event(参见epoll_ctl(2))的events字段
-     *   opaque 对应的用户数据，同struct epoll_event的data字段的ptr字段
+     *   opaque 对应的用户数据，同struct epoll_event的data字段的ptr字段，
+     *     若为nullptr，则将data字段的fd字段设为fd(默认行为)
      * 返回值:
      *   若添加失败则返回false，errno被设置
+     * 说明:
+     *   这里opaque并不是简单地给data.ptr赋值，而是在data.ptr未指向合法用户数据时让data携带对应的文件描述符。
+     *   因此将文件描述符作为携带数据的两种典型方式是:
+     *   1. add(fd, events);  2. add(fd, events, new int{fd});
+     *   其中第2种方式实际可能是new更复杂的结构，需要手动管理内存。
      */
     bool add(int fd, uint32_t events, void* opaque = nullptr) noexcept;
 

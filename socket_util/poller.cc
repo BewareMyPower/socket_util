@@ -14,12 +14,18 @@ Poller::~Poller() {
     close(epfd_);
 }
 
-bool Poller::add(int fd, uint32_t events, void* opaque) noexcept {
-    struct epoll_event ev;
+inline Poller::Event createEpollEvent(int fd, uint32_t events, void* opaque) noexcept {
+    Poller::Event ev;
     ev.events = events;
-    ev.data.ptr = opaque;
-    if (!ev.data.ptr)
+    if (opaque)
+        ev.data.ptr = opaque;
+    else
         ev.data.fd = fd;
+    return ev;
+}
+
+bool Poller::add(int fd, uint32_t events, void* opaque) noexcept {
+    auto ev = createEpollEvent(fd, events, opaque);
 
     int ret = epoll_ctl(epfd_, EPOLL_CTL_ADD, fd, &ev);
     if (ret == -1) {
@@ -44,10 +50,7 @@ bool Poller::remove(int fd) noexcept {
 }
 
 bool Poller::change(int fd, uint32_t events, void* opaque) const noexcept {
-    struct epoll_event ev;
-    ev.events = events;
-    ev.data.ptr = opaque;
-
+    auto ev = createEpollEvent(fd, events, opaque);
     return epoll_ctl(epfd_, EPOLL_CTL_MOD, fd, &ev) != -1;
 }
 

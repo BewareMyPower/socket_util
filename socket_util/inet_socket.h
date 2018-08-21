@@ -8,6 +8,7 @@
 #include <utility>  // std::pair
 
 #include "inet_address.h"
+#include "io_util.h"
 
 namespace socket_util {
 
@@ -47,6 +48,28 @@ int createTcpServer(std::string&& address, bool nonblocking = true,
  *   不同于createTcpServer直接退出，因为客户端在连接失败时可能会采取其他措施
  */
 int createTcpClient(std::string&& address) noexcept;
+
+inline bool sendAll(int sockfd, const void* buf, size_t n, int flags = 0) noexcept {
+    using namespace std::placeholders;
+
+    auto mysend = std::bind(::send, _1, _2, _3, flags);
+    return io_util::writeAll(mysend, sockfd, buf, n);
+}
+
+inline bool sendCString(int sockfd, const char* str, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, str, strlen(str), flags);
+}
+
+inline bool sendStdString(int sockfd, const std::string& str, int flags = 0) noexcept {
+    return inet::sendAll(sockfd, str.data(), str.size(), flags);
+}
+
+inline ssize_t recvNBytes(int sockfd, void* buf, size_t n, int flags = 0) noexcept {
+    using namespace std::placeholders;
+
+    auto myrecv = std::bind(::recv, _1, _2, _3, flags);
+    return io_util::readNBytes(myrecv, sockfd, buf, n);
+}
 
 // ----------------------------------------------------------------------------
 // socket底层系统调用的简单包装
@@ -135,36 +158,6 @@ inline std::pair<OptType, bool> getsockopt(int sockfd, int level, int optname) n
     int ret = ::getsockopt(sockfd, level, optname, &optval, &optlen);
 
     return std::make_pair(optval, ret != -1);
-}
-
-// ----------------------------------------------------------------------------
-// 基于包装后的socket API实现的实用函数
-
-// return true if all bytes of `buf[len]` were sent
-inline bool sendAll(int sockfd, const char* buf, size_t len, int flags = 0) noexcept {
-    size_t num_left = len;
-    while (num_left > 0) {
-        ssize_t num_send = inet::send(sockfd, buf, num_left, flags);
-        if (num_send == -1) {
-            if (errno == EINTR) {
-                num_send = 0;
-            } else {  // fatal error
-                return false;
-            }
-        }
-
-        num_left -= num_send;
-        buf += num_send;
-    }
-    return true;
-}
-
-inline bool sendCString(int sockfd, const char* str, int flags = 0) noexcept {
-    return inet::sendAll(sockfd, str, strlen(str), flags);
-}
-
-inline bool sendStdString(int sockfd, const std::string& str, int flags = 0) noexcept {
-    return inet::sendAll(sockfd, str.data(), str.size(), flags);
 }
 
 }  // END namespace socket_util::inet

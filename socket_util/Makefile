@@ -2,7 +2,7 @@ CC = g++
 FLAGS = -std=c++11 -Wall -g
 
 LIB_SOCKUTIL = libsockutil.a
-OBJECTS = inet_address.o inet_socket.o poller.o
+OBJECTS = inet_address.o inet_socket.o poller.o io_util.o
 
 all: $(LIB_SOCKUTIL)
 

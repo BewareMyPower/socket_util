@@ -64,11 +64,19 @@ inline bool sendStdString(int sockfd, const std::string& str, int flags = 0) noe
     return inet::sendAll(sockfd, str.data(), str.size(), flags);
 }
 
-inline ssize_t recvNBytes(int sockfd, void* buf, size_t n, int flags = 0) noexcept {
+inline bool recvNBytes(int sockfd, void* buf, size_t n, int flags = 0) noexcept {
     using namespace std::placeholders;
 
     auto myrecv = std::bind(::recv, _1, _2, _3, flags);
     return io_util::readNBytes(myrecv, sockfd, buf, n);
+}
+
+// 用于非阻塞套接字，否则当可用字节数量不够时可能导致阻塞
+inline ssize_t recvAsMuchAsPossible(int sockfd, void* buf, size_t n, int flags = 0) noexcept {
+    using namespace std::placeholders;
+
+    auto myrecv = std::bind(::recv, _1, _2, _3, flags);
+    return io_util::readAsMuchAsPossible(myrecv, sockfd, buf, n);
 }
 
 // ----------------------------------------------------------------------------

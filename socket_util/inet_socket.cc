@@ -1,6 +1,7 @@
 // inet_socket.cc
-#include "inet_socket.h"
 #include <fcntl.h>
+#include "inet_socket.h"
+#include "poller.h"
 #include "helpers/errors.hpp"
 
 namespace socket_util {
@@ -49,6 +50,28 @@ int createTcpClient(std::string&& address) noexcept {
     }
 
     return sockfd;
+}
+
+bool connect(int sockfd, const InetAddress& addr, unsigned int timeout_ms) noexcept {
+    int old_errno = errno;
+    if (inet::connect(sockfd, addr))
+        return true;
+
+    if (errno == EINPROGRESS) {
+        errno = old_errno;
+    } else {
+        error::Exit(errno, "inet::connect");
+    }
+
+    Poller poller;
+    poller.add(sockfd, EPOLLOUT);
+    auto events = poller.poll(static_cast<int>(timeout_ms));
+    if (events.empty()) {
+        return false;
+    } else {
+        // FIXME: how to handle EPOLLERR?
+        return true;
+    }
 }
 
 }  // END namespace socket_util::inet

@@ -49,6 +49,18 @@ int createTcpServer(std::string&& address, bool nonblocking = true,
  */
 int createTcpClient(std::string&& address) noexcept;
 
+/**
+ * 功能: 在超时时间内连接到指定套接字
+ * 参数:
+ *   sockfd     目的套接字描述符
+ *   addr       远程套接字地址
+ *   timeout_ms 超时时间，单位: 毫秒
+ * 返回值:
+ *   若在超时时间内连接成功则返回true，否则返回false。
+ *   若出现致命性错误，打印错误并退出程序。
+ */
+bool connect(int sockfd, const InetAddress& addr, unsigned int timeout_ms) noexcept;
+
 inline bool sendAll(int sockfd, const void* buf, size_t n, int flags = 0) noexcept {
     using namespace std::placeholders;
 

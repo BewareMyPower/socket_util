@@ -10,9 +10,10 @@
 #include "inet_address.h"
 #include "io_util.h"
 
-namespace socket_util {
+#define SOCKET_UTIL_INET_BEGIN namespace socket_util { namespace inet {
+#define SOCKET_UTIL_INET_END }}
 
-namespace inet {
+SOCKET_UTIL_INET_BEGIN
 
 // ----------------------------------------------------------------------------
 // 自定义的实用函数
@@ -60,6 +61,10 @@ int createTcpClient(std::string&& address) noexcept;
  *   若出现致命性错误，打印错误并退出程序。
  */
 bool connect(int sockfd, const InetAddress& addr, unsigned int timeout_ms) noexcept;
+
+inline bool connect(int sockfd, std::string&& addr, unsigned int timeout_ms) noexcept {
+    return inet::connect(sockfd, InetAddress::newInstance(std::move(addr)), timeout_ms);
+}
 
 inline bool sendAll(int sockfd, const void* buf, size_t n, int flags = 0) noexcept {
     using namespace std::placeholders;
@@ -180,6 +185,4 @@ inline std::pair<OptType, bool> getsockopt(int sockfd, int level, int optname) n
     return std::make_pair(optval, ret != -1);
 }
 
-}  // END namespace socket_util::inet
-
-}  // END namespace socket_util
+SOCKET_UTIL_INET_END

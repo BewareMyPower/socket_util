@@ -10,6 +10,14 @@
 #include "inet_address.h"
 #include "io_util.h"
 
+#ifdef SOCKET_UTIL_INET_BEGIN
+#undef SOCKET_UTIL_INET_BEGIN
+#endif
+
+#ifdef SOCKET_UTIL_INET_END
+#undef SOCKET_UTIL_INET_END
+#endif
+
 #define SOCKET_UTIL_INET_BEGIN namespace socket_util { namespace inet {
 #define SOCKET_UTIL_INET_END }}
 
